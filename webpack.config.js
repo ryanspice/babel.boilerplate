@@ -2,11 +2,10 @@
 require("babel-core/register");
 
 const webpack = require('webpack');
-
 const path = require('path');
 
-const env = process.argv.indexOf('--env') === -1 ? false : true;
 
+const env = process.argv.indexOf('--env') === -1 ? false : true;
 const source = {
     input:{
         js:'./main.js',
@@ -18,30 +17,30 @@ const source = {
         js:"main.js",
         html:"../index.html",
         html404:"../404.html"
-    }
+    },
+	plugins:[
+        new webpack.NamedModulesPlugin(),
+        //new webpack.HotModuleReplacementPlugin(),
+		new webpack.optimize.OccurrenceOrderPlugin(true),
+		new webpack.optimize.CommonsChunkPlugin({
+	      name: 'vendor',
+	      minChunks: Infinity,
+	      filename: 'vendor.js'
+	    }),
+	    new webpack.LoaderOptionsPlugin({
+	      minimize: true,
+	      debug: false
+	  })
+	]
 
 }
-const plugins = [
-	new webpack.NamedModulesPlugin(),
-	//new webpack.HotModuleReplacementPlugin(),
-	new webpack.optimize.OccurrenceOrderPlugin(true),
-	new webpack.optimize.CommonsChunkPlugin({
-	  name: 'vendor',
-	  minChunks: Infinity,
-	  filename: 'vendor.js'
-	}),
-	new webpack.LoaderOptionsPlugin({
-	  minimize: true,
-	  debug: false
-  })
-];
 
 if (env===true)
 {
 
-    source.output.js = "main.min.js";
+    source.output.js = "app.min.js";
 
-    plugins.push(new webpack.optimize.UglifyJsPlugin({
+    source.plugins.push(new webpack.optimize.UglifyJsPlugin({
 	      compress: {
             warnings: true,
             screw_ie8: true,
@@ -107,7 +106,7 @@ module.exports = {
 	     'node_modules'
      ]
   },
-  plugins:plugins,
+  plugins:source.plugins,
   devServer: {
         contentBase: './bld',
         hot: true,
