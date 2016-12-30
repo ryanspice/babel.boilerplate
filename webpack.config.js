@@ -28,8 +28,9 @@ const _PLUGINS_ = 	[
 		new webpack.LoaderOptionsPlugin({
 			minimize: true,
 			debug: false
-		}),
-		new HtmlWebpackPlugin()
+		})
+		//,
+		//new HtmlWebpackPlugin()
 	];
 
 

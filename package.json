@@ -1,6 +1,6 @@
 {
   "name": "ryanspice2016.babel.boilerplate",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Boilerplate for Babel Es2016+, Flow, Webpack",
   "main": "index.js",
   "dependencies": {
