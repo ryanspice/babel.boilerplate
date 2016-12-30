@@ -2,45 +2,44 @@
 require("babel-core/register");
 
 const webpack = require('webpack');
+
 const path = require('path');
 
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const env = process.argv.indexOf('--env') === -1 ? false : true;
-const source = {
-    input:{
-        js:'./main.js',
-        html:'./src/index.html',
-        path:'./src/',
-    },
 
-    output:{
-        js:"main.js",
-        html:"../index.html",
-        html404:"../404.html"
-    },
-	plugins:[
-        new webpack.NamedModulesPlugin(),
-        //new webpack.HotModuleReplacementPlugin(),
+const _DEFAULT_OUTPUT_JS_ = "main.js";
+
+const _DEFAULT_OUTPUT_VENDORJS_ = "vendor.js";
+
+var _OUTPUT_JS_ = _DEFAULT_OUTPUT_JS_;
+
+const _PLUGINS_ = 	[
+
+		new webpack.NamedModulesPlugin(),
+		//new webpack.HotModuleReplacementPlugin(),
 		new webpack.optimize.OccurrenceOrderPlugin(true),
 		new webpack.optimize.CommonsChunkPlugin({
-	      name: 'vendor',
-	      minChunks: Infinity,
-	      filename: 'vendor.js'
-	    }),
-	    new webpack.LoaderOptionsPlugin({
-	      minimize: true,
-	      debug: false
-	  })
-	]
+			name: 'vendor',
+			minChunks: Infinity,
+			filename: _DEFAULT_OUTPUT_VENDORJS_
+		}),
+		new webpack.LoaderOptionsPlugin({
+			minimize: true,
+			debug: false
+		}),
+		new HtmlWebpackPlugin()
+	];
 
-}
+
 
 if (env===true)
 {
 
-    source.output.js = "app.min.js";
+    _OUTPUT_JS_ = "app.min.js";
 
-    source.plugins.push(new webpack.optimize.UglifyJsPlugin({
+    _PLUGINS_.push(new webpack.optimize.UglifyJsPlugin({
 	      compress: {
             warnings: true,
             screw_ie8: true,
@@ -59,10 +58,13 @@ if (env===true)
 	      sourceMap: true
 	    })
 	);
-
+	/*
+	unused html later implement
+	html:'./src/index.html',
+	path:'./src/',
+	*/
     //webpackPlugins.push(new webpackHtmlPlugin({ filename: source.output.html404, template:'./src/404.html' }));
 }
-
 
 
 
@@ -74,7 +76,7 @@ module.exports = {
   output: {
 
     path: path.resolve(__dirname,"bld"),
-    filename: source.output.js,
+    filename: _OUTPUT_JS_,
 	publicPath:"/bld/",
 	library:"test-0",
 	libraryTarget: "umd"
@@ -106,7 +108,7 @@ module.exports = {
 	     'node_modules'
      ]
   },
-  plugins:source.plugins,
+  plugins:_PLUGINS_,
   devServer: {
         contentBase: './bld',
         hot: true,
