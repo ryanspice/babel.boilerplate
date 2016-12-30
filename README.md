@@ -1,2 +1,2 @@
 # babel.boilerplate
-Boilerplate for Babel Es2016+, Flow, Webpack
+Boilerplate for Webpack 2, Babel Es2015+ and FlowType
