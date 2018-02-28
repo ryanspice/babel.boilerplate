@@ -1,12 +1,12 @@
 {
 
     "presets": [
-        ["es2015", { "modules": false }],
-		"stage-0"
+        ["env"]
 	],
 	"plugins": [ "syntax-flow","typecheck","transform-flow-strip-types",  "transform-class-properties"]
-
 }
+//,
+//"plugins": [ "syntax-flow","typecheck","transform-flow-strip-types",  "transform-class-properties"]
 
 //"transform-flow-strip-types",
 //"typecheck",

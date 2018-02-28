@@ -1,34 +1,35 @@
 
-require("babel-core/register");
+/*
+	Webpack 4 + Babel 7 + FlowType
+		by ryanspice-finnie
+*/
 
 const webpack = require('webpack');
-
 const path = require('path');
+
+require("babel-register");
+
+let entry = "main.js";
+let vendor = "vendor.js";
+
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const env = process.argv.indexOf('--env') === -1 ? false : true;
 
-const _DEFAULT_OUTPUT_JS_ = "main.js";
-
 const _DEFAULT_OUTPUT_VENDORJS_ = "vendor.js";
 
-var _OUTPUT_JS_ = _DEFAULT_OUTPUT_JS_;
 
 const _PLUGINS_ = 	[
 
-		new webpack.NamedModulesPlugin(),
+		//new webpack.NamedModulesPlugin(),
 		//new webpack.HotModuleReplacementPlugin(),
-		new webpack.optimize.OccurrenceOrderPlugin(true),
-		new webpack.optimize.CommonsChunkPlugin({
-			name: 'vendor',
-			minChunks: Infinity,
-			filename: _DEFAULT_OUTPUT_VENDORJS_
-		}),
-		new webpack.LoaderOptionsPlugin({
-			minimize: true,
-			debug: false
-		})
+		//new webpack.optimize.OccurrenceOrderPlugin(true),
+
+		//new webpack.LoaderOptionsPlugin({
+		//	minimize: true,
+		//	debug: false
+		//})
 		//,
 		//new HtmlWebpackPlugin()
 	];
@@ -38,7 +39,7 @@ const _PLUGINS_ = 	[
 if (env===true)
 {
 
-    _OUTPUT_JS_ = "app.min.js";
+    entry = "app.min.js";
 
     _PLUGINS_.push(new webpack.optimize.UglifyJsPlugin({
 	      compress: {
@@ -70,6 +71,7 @@ if (env===true)
 
 
 module.exports = {
+	mode:'development',
   context: '',
   entry: {
 	js:['babel-polyfill', './src/index.js']
@@ -77,11 +79,32 @@ module.exports = {
   output: {
 
     path: path.resolve(__dirname,"bld"),
-    filename: _OUTPUT_JS_,
+    filename: entry,
 	publicPath:"/bld/",
 	library:"test-0",
 	libraryTarget: "umd"
   },
+  /*
+  optimization:{
+
+	  splitChunks:true
+  },
+  */
+	module:{
+		rules: [
+	      {
+	        test: /\.js$/,
+	        exclude: /(node_modules|bower_components)/,
+	        use: {
+	          loader: 'babel-loader',
+	          options: {
+	            presets: ['env']
+	          }
+	        }
+	      }
+	    ]
+},
+  /*
   module: {
       rules:[
             {
@@ -101,6 +124,7 @@ module.exports = {
 
       ]
   },
+  */
   resolve: {
     extensions: ['.js'],
 	  plugins: [],
