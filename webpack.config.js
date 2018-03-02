@@ -13,13 +13,10 @@ const env = process.argv.indexOf('--env') === -1 ? false : true;
 let entry = "main.js";
 let vendor = "vendor.js";
 
-
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const _DEFAULT_OUTPUT_VENDORJS_ = "vendor.js";
-
 //TODO remove this and useu webpack
-const _PLUGINS_ = 	[
+const plugins = 	[
 
 		//new webpack.NamedModulesPlugin(),
 		//new webpack.HotModuleReplacementPlugin(),
@@ -43,7 +40,7 @@ if (env===true) {
 	//create minified JS instead of regular
     entry = "app.min.js";
 
-    _PLUGINS_.push(new webpack.optimize.UglifyJsPlugin({
+    plugins.push(new webpack.optimize.UglifyJsPlugin({
 	      compress: {
             warnings: true,
             screw_ie8: true,
@@ -72,8 +69,6 @@ if (env===true) {
 
 }
 
-
-
 module.exports = {
 	mode:'development',
 	context: '',
@@ -96,6 +91,12 @@ module.exports = {
 	  splitChunks:true
   },
   */
+  optimization:{
+	  runtimeChunk: false,
+	  splitChunks: {
+		chunks: "all", //Taken from https://gist.github.com/sokra/1522d586b8e5c0f5072d7565c2bee693
+	  }
+},
 	module:{
 		rules: [
 	      {
@@ -122,7 +123,7 @@ resolve: {
 		'node_modules'
 	]
 },
-plugins:_PLUGINS_,
+plugins:plugins,
 devServer: {
     contentBase: './bld',
     hot: true,
