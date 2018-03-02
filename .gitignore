@@ -1,4 +1,4 @@
 node_modules
-bld
+bld/
 
 .DS_Store

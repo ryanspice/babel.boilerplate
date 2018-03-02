@@ -1,13 +1,14 @@
 
 /*
-	Webpack 4 + Babel 7 + FlowType
+	Webpack 4 + Babel 6 + FlowType
 		by ryanspice-finnie
 */
 
+require("babel-register");
+
 const webpack = require('webpack');
 const path = require('path');
-
-require("babel-register");
+const env = process.argv.indexOf('--env') === -1 ? false : true;
 
 let entry = "main.js";
 let vendor = "vendor.js";
@@ -15,11 +16,9 @@ let vendor = "vendor.js";
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const env = process.argv.indexOf('--env') === -1 ? false : true;
-
 const _DEFAULT_OUTPUT_VENDORJS_ = "vendor.js";
 
-
+//TODO remove this and useu webpack
 const _PLUGINS_ = 	[
 
 		//new webpack.NamedModulesPlugin(),
@@ -34,11 +33,14 @@ const _PLUGINS_ = 	[
 		//new HtmlWebpackPlugin()
 	];
 
+/*
+	If ENV prod is true
+		add to plugins
+*/
 
+if (env===true) {
 
-if (env===true)
-{
-
+	//create minified JS instead of regular
     entry = "app.min.js";
 
     _PLUGINS_.push(new webpack.optimize.UglifyJsPlugin({
@@ -60,24 +62,28 @@ if (env===true)
 	      sourceMap: true
 	    })
 	);
+
 	/*
 	unused html later implement
 	html:'./src/index.html',
 	path:'./src/',
 	*/
     //webpackPlugins.push(new webpackHtmlPlugin({ filename: source.output.html404, template:'./src/404.html' }));
+
 }
 
 
 
 module.exports = {
 	mode:'development',
-  context: '',
-  entry: {
-	js:['babel-polyfill', './src/index.js']
-  },
+	context: '',
+	entry: {
+		js:[
+			'babel-polyfill',
+			'./src/index.js'
+			]
+	},
   output: {
-
     path: path.resolve(__dirname,"bld"),
     filename: entry,
 	publicPath:"/bld/",
@@ -104,54 +110,37 @@ module.exports = {
 	      }
 	    ]
 },
-  /*
-  module: {
-      rules:[
-            {
-                test: /\.html$/,
-                exclude: /node_modules/,
-                use: 'file-loader',
-                query: {
-                  name: '[name].[ext]'
-                }
-            },
-            {
-                test: /\.(js|jsx)$/,
-                use: [
-                  'babel-loader'
-                ]
-            },
+resolve: {
+	extensions: [
+		'.js'
+	],
+	plugins: [
 
-      ]
-  },
-  */
-  resolve: {
-    extensions: ['.js'],
-	  plugins: [],
-	  modules: [
-	     './src',
-	     'node_modules'
-     ]
-  },
-  plugins:_PLUGINS_,
-  devServer: {
-        contentBase: './bld',
-        hot: true,
-        inline: true,
-        compress: true,
-        stats: {
-            assets: true,
-            children: false,
-            chunks: false,
-            hash: false,
-            modules: false,
-            publicPath: false,
-            timings: true,
-            version: false,
-            warnings: true,
-            colors: {
-                green: '\u001b[32m',
-            }
-        }
-   }
+	],
+	modules: [
+		'./src',
+		'node_modules'
+	]
+},
+plugins:_PLUGINS_,
+devServer: {
+    contentBase: './bld',
+    hot: true,
+    inline: true,
+    compress: true,
+    stats: {
+	        assets: true,
+	        children: false,
+	        chunks: false,
+	        hash: false,
+	        modules: false,
+	        publicPath: false,
+	        timings: true,
+	        version: false,
+	        warnings: true,
+	        colors: {
+	            green: '\u001b[32m',
+	        }
+    	}
+	}
 }
